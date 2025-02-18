@@ -9,15 +9,27 @@ interface MainLayoutProps {
   children: React.ReactNode;
 }
 
-const allEvents = [
+interface Event {
+  id: string;
+  title: string;
+  date: string;
+  status: string;
+  imageUrl: string;
+  category: string;
+  organizer: {
+    name: string;
+    avatar: string;
+  };
+}
+
+const allEvents: Event[] = [
   {
     id: "1",
     title: "Tech Conference 2024",
     date: "April 15, 2024",
     status: "upcoming",
-    category: "Tech",
-    imageUrl:
-      "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&auto=format&fit=crop",
+    imageUrl: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&auto=format&fit=crop",
+    category: "Technology",
     organizer: {
       name: "John Doe",
       avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=John",
@@ -26,11 +38,10 @@ const allEvents = [
   {
     id: "2",
     title: "Music Festival",
-    date: "May 1, 2024",
+    date: "Today",
     status: "live",
+    imageUrl: "https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=800&auto=format&fit=crop",
     category: "Music",
-    imageUrl:
-      "https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=800&auto=format&fit=crop",
     organizer: {
       name: "Jane Smith",
       avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Jane",
@@ -41,12 +52,71 @@ const allEvents = [
     title: "Sports Tournament",
     date: "March 10, 2024",
     status: "completed",
+    imageUrl: "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=800&auto=format&fit=crop",
     category: "Sports",
-    imageUrl:
-      "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=800&auto=format&fit=crop",
     organizer: {
       name: "Mike Johnson",
       avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Mike",
+    },
+  },
+  {
+    id: "4",
+    title: "Art Exhibition",
+    date: "May 5, 2024",
+    status: "upcoming",
+    imageUrl: "https://images.unsplash.com/photo-1511108690759-0eed7a9a8b6a?w=800&auto=format&fit=crop",
+    category: "Art",
+    organizer: {
+      name: "Emily Chen",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Emily",
+    },
+  },
+  {
+    id: "5",
+    title: "Startup Pitch Competition",
+    date: "June 20, 2024",
+    status: "upcoming",
+    imageUrl: "https://images.unsplash.com/photo-1661956602116-aa6865609028?w=800&auto=format&fit=crop",
+    category: "Business",
+    organizer: {
+      name: "Alex Rodriguez",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alex",
+    },
+  },
+  {
+    id: "6",
+    title: "International Film Festival",
+    date: "July 15, 2024",
+    status: "upcoming",
+    imageUrl: "https://images.unsplash.com/photo-1524985069026-dd778a71c7b4?w=800&auto=format&fit=crop",
+    category: "Entertainment",
+    organizer: {
+      name: "Sarah Lee",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah",
+    },
+  },
+  {
+    id: "7",
+    title: "Coding Hackathon",
+    date: "August 10, 2024",
+    status: "upcoming",
+    imageUrl: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&auto=format&fit=crop",
+    category: "Technology",
+    organizer: {
+      name: "David Kim",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=David",
+    },
+  },
+  {
+    id: "8",
+    title: "Food and Wine Expo",
+    date: "September 5, 2024",
+    status: "upcoming",
+    imageUrl: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=800&auto=format&fit=crop",
+    category: "Culinary",
+    organizer: {
+      name: "Maria Garcia",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Maria",
     },
   },
 ];
@@ -56,8 +126,8 @@ const MainLayout = ({ children }: MainLayoutProps) => {
   const showHeader = !location.pathname.includes("/tempobook/");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
-  const [filteredEvents, setFilteredEvents] =
-    useState<typeof allEvents>(allEvents);
+  const [visibleEvents, setVisibleEvents] = useState(4);
+  const [filteredEvents, setFilteredEvents] = useState<typeof allEvents>(allEvents);
 
   // Only show search and filters on the home page
   const showSearchAndFilters = location.pathname === "/";
@@ -81,6 +151,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
     }
 
     setFilteredEvents(filtered);
+    setVisibleEvents(4); // Reset visible events when filtering
   };
 
   const handleSearch = (term: string) => {
@@ -93,6 +164,10 @@ const MainLayout = ({ children }: MainLayoutProps) => {
     filterEvents(searchTerm, category);
   };
 
+  const handleLoadMore = () => {
+    setVisibleEvents((prev) => prev + 4);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       {showHeader && (
@@ -102,9 +177,9 @@ const MainLayout = ({ children }: MainLayoutProps) => {
               <div className="flex items-center gap-6">
                 <Link
                   to="/"
-                  className="text-2xl font-bold hover:text-primary transition-colors"
+                  className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-600 hover:text-primary transition-colors"
                 >
-                  Event Platform
+                  Digi-Pro
                 </Link>
                 <Button variant="ghost" size="sm" asChild>
                   <Link to="/landing" className="gap-2">
@@ -113,9 +188,11 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                 </Button>
               </div>
               <div className="flex items-center gap-4">
-                <Button variant="outline" asChild>
-                  <Link to="/organizer/dashboard">Organizer Dashboard</Link>
-                </Button>
+                {!location.pathname.includes("/organizer/dashboard") && (
+                  <Button variant="outline" asChild>
+                    <Link to="/organizer/dashboard">Organizer Dashboard</Link>
+                  </Button>
+                )}
                 {location.pathname === "/organizer/dashboard" && (
                   <Button
                     className="bg-gradient-to-r from-green-400 to-green-600 hover:from-green-500 hover:to-green-700 text-white shadow-md hover:shadow-lg transition-all duration-300"
@@ -152,7 +229,14 @@ const MainLayout = ({ children }: MainLayoutProps) => {
           </div>
         </div>
       )}
-      {location.pathname === "/" ? <Home events={filteredEvents} /> : children}
+      {location.pathname === "/" && (
+        <Home 
+          events={filteredEvents.slice(0, visibleEvents)} 
+          onLoadMore={handleLoadMore} 
+          hasMoreEvents={visibleEvents < filteredEvents.length}
+        />
+      )}
+      {location.pathname !== "/" && children}
     </div>
   );
 };

@@ -81,7 +81,7 @@ export default function LandingPage() {
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center py-4">
             <div className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-600">
-              Event Platform
+              Digi-Pro
             </div>
             <div className="flex items-center gap-4">
               <div className="flex gap-2">
@@ -134,12 +134,24 @@ export default function LandingPage() {
         >
           <div className="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]"></div>
         </div>
-        <Badge className="mb-4" variant="secondary">
+        <Badge className="mb-4 relative 
+          bg-purple-500/20 
+          text-purple-700 
+          border-purple-300 
+          hover:bg-purple-500/30 
+          transition-all 
+          duration-300 
+          ease-in-out 
+          shadow-lg 
+          shadow-purple-500/50 
+          hover:shadow-xl 
+          hover:shadow-purple-500/70" 
+          variant="secondary">
           Now in Beta
         </Badge>
-        <h1 className="text-4xl font-bold tracking-tight sm:text-7xl mb-6 bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-600">
+        <h1 className="text-4xl font-bold tracking-tight sm:text-7xl mb-8 bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-600">
           The Modern Way to
-          <span className="block">Manage Events</span>
+          <span className="block">handle events</span>
         </h1>
         <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
           Streamline your event management process with our powerful platform.
@@ -172,15 +184,18 @@ export default function LandingPage() {
             {features.map((feature, index) => (
               <Card
                 key={index}
-                className="border hover:border-primary/50 transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
+                className="border hover:border-primary/50 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 
+                  relative overflow-hidden group
+                  before:absolute before:inset-0 before:bg-gradient-to-br before:from-primary/10 before:to-purple-500/10 
+                  before:opacity-0 hover:before:opacity-100 before:transition-opacity before:duration-300
+                  after:absolute after:inset-0 after:border-2 after:border-transparent 
+                  after:hover:border-primary/30 after:transition-all after:duration-300"
               >
-                <CardContent className="pt-6">
+                <CardContent className="pt-6 relative z-10">
                   <div className="rounded-full w-12 h-12 flex items-center justify-center bg-gradient-to-br from-primary/20 to-purple-500/20 text-primary mb-4 ring-1 ring-primary/20">
                     {feature.icon}
                   </div>
-                  <h3 className="text-xl font-semibold mb-2">
-                    {feature.title}
-                  </h3>
+                  <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
                   <p className="text-gray-600">{feature.description}</p>
                 </CardContent>
               </Card>
@@ -199,15 +214,20 @@ export default function LandingPage() {
         </div>
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-12">
-            Simple, transparent pricing
+            Simple Pricing
           </h2>
           <div className="grid md:grid-cols-3 gap-8">
             {pricingTiers.map((tier, index) => (
               <Card
                 key={index}
-                className="border hover:border-primary/50 transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
+                className="border hover:border-primary/50 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 
+                  relative overflow-hidden group
+                  before:absolute before:inset-0 before:bg-gradient-to-br before:from-primary/10 before:to-purple-500/10 
+                  before:opacity-0 hover:before:opacity-100 before:transition-opacity before:duration-300
+                  after:absolute after:inset-0 after:border-2 after:border-transparent 
+                  after:hover:border-primary/30 after:transition-all after:duration-300"
               >
-                <CardContent className="pt-6">
+                <CardContent className="pt-6 relative z-10">
                   <h3 className="text-xl font-semibold mb-2">{tier.name}</h3>
                   <div className="mb-4">
                     <span className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-600">
@@ -238,6 +258,65 @@ export default function LandingPage() {
           </div>
         </div>
       </div>
+
+      {/* Footer */}
+      <footer className="bg-gradient-to-r from-primary/10 to-purple-500/10 py-16 border-t">
+        <div className="container mx-auto px-4">
+          <div className="grid md:grid-cols-4 gap-8">
+            {/* Brand Section */}
+            <div>
+              <div className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-600 mb-4">
+                Digi-Pro
+              </div>
+              <p className="text-gray-600">Revolutionizing event management with cutting-edge technology.</p>
+            </div>
+
+            {/* Quick Links */}
+            <div>
+              <h4 className="font-semibold text-lg mb-4">Quick Links</h4>
+              <ul className="space-y-2">
+                <li><a href="#" className="text-gray-600 hover:text-primary transition-colors">Features</a></li>
+                <li><a href="#" className="text-gray-600 hover:text-primary transition-colors">Pricing</a></li>
+                <li><a href="#" className="text-gray-600 hover:text-primary transition-colors">Support</a></li>
+                <li><a href="#" className="text-gray-600 hover:text-primary transition-colors">Contact</a></li>
+              </ul>
+            </div>
+
+            {/* Legal */}
+            <div>
+              <h4 className="font-semibold text-lg mb-4">Legal</h4>
+              <ul className="space-y-2">
+                <li><a href="#" className="text-gray-600 hover:text-primary transition-colors">Terms of Service</a></li>
+                <li><a href="#" className="text-gray-600 hover:text-primary transition-colors">Privacy Policy</a></li>
+                <li><a href="#" className="text-gray-600 hover:text-primary transition-colors">Cookies Policy</a></li>
+              </ul>
+            </div>
+
+            {/* Newsletter */}
+            <div>
+              <h4 className="font-semibold text-lg mb-4">Stay Updated</h4>
+              <p className="text-gray-600 mb-4">Subscribe to our newsletter for the latest updates.</p>
+              <div className="flex">
+                <input 
+                  type="email" 
+                  placeholder="Enter your email" 
+                  className="w-full px-4 py-2 border rounded-l-md focus:outline-none focus:ring-2 focus:ring-primary"
+                />
+                <button 
+                  className="bg-gradient-to-r from-primary to-purple-600 text-white px-4 py-2 rounded-r-md hover:from-primary/90 hover:to-purple-600/90 transition-all"
+                >
+                  Subscribe
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Copyright */}
+          <div className="mt-12 pt-8 border-t text-center text-gray-600">
+            <p>&copy; {new Date().getFullYear()} Digi-Pro. All rights reserved.</p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
