@@ -67,8 +67,57 @@ const pricingTiers = [
 ];
 
 export default function LandingPage() {
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+    }
+  };
   return (
     <div className="min-h-screen bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-blue-100 via-white to-white overflow-hidden">
+      {/* Navigation */}
+      <div className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-sm border-b">
+        <div className="container mx-auto px-4">
+          <div className="flex justify-between items-center py-4">
+            <div className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-600">
+              Event Platform
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="flex gap-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => scrollToSection("features")}
+                >
+                  Features
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => scrollToSection("pricing")}
+                >
+                  Pricing
+                </Button>
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="hover:bg-primary/5"
+                >
+                  Log in
+                </Button>
+                <Button
+                  size="sm"
+                  className="bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white shadow-md hover:shadow-lg transition-all duration-300"
+                >
+                  Sign up
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
       {/* Hero Section */}
       <div className="container mx-auto px-4 pt-20 pb-16 text-center lg:pt-32 relative">
         <div
@@ -103,7 +152,10 @@ export default function LandingPage() {
       </div>
 
       {/* Features Section */}
-      <div className="py-24 bg-white/50 backdrop-blur-sm">
+      <div
+        id="features"
+        className="py-24 bg-white/50 backdrop-blur-sm scroll-mt-16"
+      >
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-12">
             Everything you need to run successful events
@@ -130,7 +182,7 @@ export default function LandingPage() {
       </div>
 
       {/* Pricing Section */}
-      <div className="py-24 relative overflow-hidden">
+      <div id="pricing" className="py-24 relative overflow-hidden scroll-mt-16">
         <div
           className="absolute inset-0 -z-10 transform-gpu overflow-hidden blur-3xl"
           aria-hidden="true"

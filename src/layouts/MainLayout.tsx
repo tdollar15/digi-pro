@@ -112,13 +112,28 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                   </Link>
                 </Button>
               </div>
-              <div className="flex gap-4">
+              <div className="flex items-center gap-4">
                 <Button variant="outline" asChild>
                   <Link to="/">Browse Events</Link>
                 </Button>
                 <Button variant="outline" asChild>
                   <Link to="/organizer/dashboard">Organizer Dashboard</Link>
                 </Button>
+                <div className="flex gap-2 ml-4 border-l pl-4">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="hover:bg-primary/5"
+                  >
+                    Log in
+                  </Button>
+                  <Button
+                    size="sm"
+                    className="bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white shadow-md hover:shadow-lg transition-all duration-300"
+                  >
+                    Sign up
+                  </Button>
+                </div>
               </div>
             </div>
             {showSearchAndFilters && (
