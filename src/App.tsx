@@ -14,6 +14,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/landing" element={<LandingPage />} />
+          <Route path="/landing" element={<LandingPage />} />
           <Route path="/event/:id" element={<EventDetails />} />
           <Route path="/organizer/dashboard" element={<OrganizerDashboard />} />
         </Routes>

@@ -101,7 +101,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
             <div className="flex justify-between items-center mb-4">
               <div className="flex items-center gap-6">
                 <Link
-                  to="/landing"
+                  to="/"
                   className="text-2xl font-bold hover:text-primary transition-colors"
                 >
                   Event Platform
@@ -114,11 +114,16 @@ const MainLayout = ({ children }: MainLayoutProps) => {
               </div>
               <div className="flex items-center gap-4">
                 <Button variant="outline" asChild>
-                  <Link to="/">Browse Events</Link>
-                </Button>
-                <Button variant="outline" asChild>
                   <Link to="/organizer/dashboard">Organizer Dashboard</Link>
                 </Button>
+                {location.pathname === "/organizer/dashboard" && (
+                  <Button
+                    className="bg-gradient-to-r from-green-400 to-green-600 hover:from-green-500 hover:to-green-700 text-white shadow-md hover:shadow-lg transition-all duration-300"
+                    asChild
+                  >
+                    <Link to="/">Browse Events</Link>
+                  </Button>
+                )}
                 <div className="flex gap-2 ml-4 border-l pl-4">
                   <Button
                     variant="ghost"

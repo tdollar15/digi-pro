@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -97,6 +98,13 @@ export default function LandingPage() {
                   onClick={() => scrollToSection("pricing")}
                 >
                   Pricing
+                </Button>
+                <Button
+                  size="sm"
+                  className="bg-gradient-to-r from-green-400 to-green-600 hover:from-green-500 hover:to-green-700 text-white shadow-md hover:shadow-lg transition-all duration-300"
+                  asChild
+                >
+                  <Link to="/">Browse Events</Link>
                 </Button>
               </div>
               <div className="flex gap-2">
