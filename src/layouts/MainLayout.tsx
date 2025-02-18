@@ -1,6 +1,7 @@
 import React from "react";
 import Header from "@/components/Header";
-import { useLocation, Link } from "react-router-dom";
+import { useLocation, Link, useNavigate } from "react-router-dom";
+import Home from "@/components/home";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 
@@ -54,8 +55,12 @@ const MainLayout = ({ children }: MainLayoutProps) => {
   const location = useLocation();
   const showHeader = !location.pathname.includes("/tempobook/");
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [filteredEvents, setFilteredEvents] = useState(allEvents);
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [filteredEvents, setFilteredEvents] =
+    useState<typeof allEvents>(allEvents);
+
+  // Only show search and filters on the home page
+  const showSearchAndFilters = location.pathname === "/";
 
   const categories = [
     "All",
@@ -94,9 +99,19 @@ const MainLayout = ({ children }: MainLayoutProps) => {
         <div className="sticky top-0 z-50 w-full bg-white border-b shadow-sm">
           <div className="container mx-auto px-4 py-4">
             <div className="flex justify-between items-center mb-4">
-              <Link to="/" className="text-2xl font-bold">
-                Event Platform
-              </Link>
+              <div className="flex items-center gap-6">
+                <Link
+                  to="/landing"
+                  className="text-2xl font-bold hover:text-primary transition-colors"
+                >
+                  Event Platform
+                </Link>
+                <Button variant="ghost" size="sm" asChild>
+                  <Link to="/landing" className="gap-2">
+                    <span>Home</span>
+                  </Link>
+                </Button>
+              </div>
               <div className="flex gap-4">
                 <Button variant="outline" asChild>
                   <Link to="/">Browse Events</Link>
@@ -106,18 +121,18 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                 </Button>
               </div>
             </div>
-            <Header
-              onSearch={handleSearch}
-              onCategorySelect={handleCategorySelect}
-              selectedCategory={selectedCategory}
-              categories={categories}
-            />
+            {showSearchAndFilters && (
+              <Header
+                onSearch={handleSearch}
+                onCategorySelect={handleCategorySelect}
+                selectedCategory={selectedCategory}
+                categories={categories}
+              />
+            )}
           </div>
         </div>
       )}
-      {React.cloneElement(children as React.ReactElement, {
-        events: filteredEvents,
-      })}
+      {location.pathname === "/" ? <Home events={filteredEvents} /> : children}
     </div>
   );
 };

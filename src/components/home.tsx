@@ -5,6 +5,7 @@ interface Event {
   title: string;
   date: string;
   status: "live" | "upcoming" | "completed";
+  category: string;
   imageUrl: string;
   organizer: {
     name: string;
@@ -13,7 +14,7 @@ interface Event {
 }
 
 interface HomeProps {
-  events?: Event[];
+  events: Event[];
 }
 
 function Home({ events }: HomeProps) {
