@@ -28,7 +28,7 @@ interface Event {
 }
 
 const OrganizerDashboard = () => {
-  const [activeTab, setActiveTab] = useState("upcoming");
+  const [activeTab, setActiveTab] = useState<"upcoming" | "live" | "completed">("upcoming");
   const [isCreateEventModalOpen, setIsCreateEventModalOpen] = useState(false);
   
   const [newEvent, setNewEvent] = useState<Omit<Event, 'id' | 'organizer'>>({
@@ -42,60 +42,59 @@ const OrganizerDashboard = () => {
     category: ''
   });
 
-  const [events, setEvents] = useState<Record<string, Event[]>>({
-    upcoming: [
-      {
-        id: "1",
-        title: "Tech Conference 2024",
-        date: "April 15, 2024",
-        time: "9:00 AM - 5:00 PM",
-        location: "Convention Center, New York",
-        description: "Join us for the biggest tech conference of the year",
-        status: "upcoming",
-        imageUrl: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&auto=format&fit=crop",
-        category: "Tech",
-        organizer: {
-          name: "John Doe",
-          avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=John",
-          isCurrentUser: true
-        }
-      },
-      {
-        id: "2",
-        title: "Music Festival 2024",
-        date: "May 1, 2024",
-        time: "2:00 PM - 11:00 PM",
-        location: "Central Park, New York",
-        description: "A day of amazing music featuring top artists",
-        status: "live",
-        imageUrl: "https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=800&auto=format&fit=crop",
-        category: "Music",
-        organizer: {
-          name: "John Doe",
-          avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=John",
-          isCurrentUser: true
-        }
-      },
-      {
-        id: "3",
-        title: "Art Exhibition",
-        date: "March 10, 2024",
-        time: "10:00 AM - 6:00 PM",
-        location: "Modern Art Museum",
-        description: "Annual contemporary art showcase",
-        status: "completed",
-        imageUrl: "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=800&auto=format&fit=crop",
-        category: "Art",
-        organizer: {
-          name: "John Doe",
-          avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=John",
-          isCurrentUser: true
-        }
+  const [events, setEvents] = useState<Event[]>([
+    {
+      id: "1",
+      title: "Tech Conference 2024",
+      date: "April 15, 2024",
+      time: "9:00 AM - 5:00 PM",
+      location: "Convention Center, New York",
+      description: "Join us for the biggest tech conference of the year",
+      status: "upcoming",
+      imageUrl: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&auto=format&fit=crop",
+      category: "Tech",
+      organizer: {
+        name: "John Doe",
+        avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=John",
+        isCurrentUser: true
       }
-    ],
-    live: [],
-    completed: []
-  });
+    },
+    {
+      id: "2",
+      title: "Music Festival 2024",
+      date: "May 1, 2024",
+      time: "2:00 PM - 11:00 PM",
+      location: "Central Park, New York",
+      description: "A day of amazing music featuring top artists",
+      status: "live",
+      imageUrl: "https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=800&auto=format&fit=crop",
+      category: "Music",
+      organizer: {
+        name: "John Doe",
+        avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=John",
+        isCurrentUser: true
+      }
+    },
+    {
+      id: "3",
+      title: "Art Exhibition",
+      date: "March 10, 2024",
+      time: "10:00 AM - 6:00 PM",
+      location: "Modern Art Museum",
+      description: "Annual contemporary art showcase",
+      status: "completed",
+      imageUrl: "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=800&auto=format&fit=crop",
+      category: "Art",
+      organizer: {
+        name: "John Doe",
+        avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=John",
+        isCurrentUser: true
+      }
+    }
+  ]);
+
+  // Filter events based on active tab
+  const filteredEvents = events.filter(event => event.status === activeTab);
 
   const handleCreateEvent = () => {
     // Get current date in local timezone
@@ -123,9 +122,9 @@ const OrganizerDashboard = () => {
       }
     };
 
-    // Add to the upcoming events array
-    const updatedEvents = {...events};
-    updatedEvents.upcoming.push(newEventWithId);
+    // Add to the events array
+    const updatedEvents = [...events];
+    updatedEvents.push(newEventWithId);
     
     setEvents(updatedEvents);
 
@@ -264,45 +263,24 @@ const OrganizerDashboard = () => {
 
       <Card>
         <CardHeader>
-          <Tabs defaultValue="all" className="w-full">
+          <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as any)}>
             <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger 
-                value="all" 
-                className="data-[state=active]:bg-orange-500 data-[state=active]:text-white hover:bg-orange-400"
-              >
-                All
-              </TabsTrigger>
-              <TabsTrigger 
-                value="upcoming" 
-                className="data-[state=active]:bg-orange-500 data-[state=active]:text-white hover:bg-orange-400"
-              >
-                Upcoming
-              </TabsTrigger>
-              <TabsTrigger 
-                value="live" 
-                className="data-[state=active]:bg-green-500 data-[state=active]:text-white hover:bg-green-400"
-              >
-                Live
-              </TabsTrigger>
-              <TabsTrigger 
-                value="completed" 
-                className="data-[state=active]:bg-blue-500 data-[state=active]:text-white hover:bg-blue-400"
-              >
-                Completed
-              </TabsTrigger>
+              <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
+              <TabsTrigger value="live">Live</TabsTrigger>
+              <TabsTrigger value="completed">Completed</TabsTrigger>
+              <TabsTrigger value="all">All</TabsTrigger>
             </TabsList>
-
-            <TabsContent value="all">
-              <EventGrid events={[...events.upcoming, ...events.live, ...events.completed]} />
-            </TabsContent>
             <TabsContent value="upcoming">
-              <EventGrid events={events.upcoming} />
+              <EventGrid events={filteredEvents} />
             </TabsContent>
             <TabsContent value="live">
-              <EventGrid events={events.live} />
+              <EventGrid events={filteredEvents} />
             </TabsContent>
             <TabsContent value="completed">
-              <EventGrid events={events.completed} />
+              <EventGrid events={filteredEvents} />
+            </TabsContent>
+            <TabsContent value="all">
+              <EventGrid events={events} />
             </TabsContent>
           </Tabs>
         </CardHeader>

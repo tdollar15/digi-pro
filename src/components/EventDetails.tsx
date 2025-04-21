@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Card, CardContent } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
 import { CalendarDays, MapPin, Clock, Check, Plus } from "lucide-react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Checkbox } from "./ui/checkbox";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
 import { Input } from "./ui/input";
@@ -27,19 +27,36 @@ interface TaskItem {
   isCompleted?: boolean;
 }
 
-const mockEvents = {
+interface EventDetails {
+  id: string;
+  title: string;
+  date: string;
+  time: string;
+  location: string;
+  description: string;
+  status: string;
+  category: string;
+  imageUrl: string;
+  organizer: {
+    name: string;
+    avatar: string;
+    isCurrentUser: boolean;
+  };
+  program: ProgramItem[];
+  tasks: TaskItem[];
+}
+
+const mockEvents: Record<string, EventDetails> = {
   "1": {
     id: "1",
     title: "Tech Conference 2024",
     date: "April 15, 2024",
     time: "9:00 AM - 5:00 PM",
     location: "Convention Center, New York",
-    description:
-      "Join us for the biggest tech conference of the year featuring industry leaders and innovative workshops.",
+    description: "Join us for the biggest tech conference of the year featuring industry leaders and innovative workshops.",
     status: "upcoming",
     category: "Tech",
-    imageUrl:
-      "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&auto=format&fit=crop",
+    imageUrl: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&auto=format&fit=crop",
     organizer: {
       name: "John Doe",
       avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=John",
@@ -49,48 +66,41 @@ const mockEvents = {
       {
         time: "9:00 AM",
         title: "Registration & Breakfast",
-        description: "Check-in and enjoy breakfast",
-        isCompleted: false,
+        description: "Welcome and morning refreshments",
       },
       {
         time: "10:00 AM",
         title: "Keynote Speech",
         description: "Opening remarks and industry insights",
-        isCompleted: false,
       },
       {
         time: "12:00 PM",
         title: "Lunch Break",
         description: "Networking lunch",
-        isCompleted: false,
       },
       {
         time: "1:00 PM",
         title: "Workshop Sessions",
         description: "Choose from multiple tracks",
-        isCompleted: false,
       },
       {
         time: "4:00 PM",
         title: "Closing Remarks",
         description: "Event wrap-up and next steps",
-        isCompleted: false,
       },
     ],
-    tasks: [] as TaskItem[],
+    tasks: [],
   },
   "2": {
     id: "2",
-    title: "Music Festival",
+    title: "Music Festival 2024",
     date: "May 1, 2024",
     time: "2:00 PM - 11:00 PM",
     location: "Central Park, New York",
-    description:
-      "A day of amazing music featuring top artists and emerging talent.",
+    description: "A day of amazing music featuring top artists",
     status: "live",
     category: "Music",
-    imageUrl:
-      "https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=800&auto=format&fit=crop",
+    imageUrl: "https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=800&auto=format&fit=crop",
     organizer: {
       name: "Jane Smith",
       avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Jane",
@@ -99,46 +109,150 @@ const mockEvents = {
     program: [
       {
         time: "2:00 PM",
-        title: "Gates Open",
-        description: "Welcome and security check",
-        isCompleted: true,
+        title: "Opening Act",
+        description: "Local band performance",
       },
       {
         time: "3:00 PM",
-        title: "Opening Act",
-        description: "Rising stars performance",
-        isCompleted: true,
+        title: "Main Stage",
+        description: "Headliner performance",
       },
       {
         time: "5:00 PM",
-        title: "Main Stage",
-        description: "Headliner performance",
-        isCompleted: false,
+        title: "Special Guest",
+        description: "Surprise artist performance",
       },
       {
         time: "8:00 PM",
-        title: "Special Guest",
-        description: "Surprise artist performance",
-        isCompleted: false,
-      },
-      {
-        time: "10:00 PM",
         title: "Closing Act",
         description: "Grand finale",
-        isCompleted: false,
       },
     ],
-    tasks: [] as TaskItem[],
+    tasks: [],
+  },
+  "3": {
+    id: "3",
+    title: "Art Exhibition",
+    date: "March 10, 2024",
+    time: "10:00 AM - 6:00 PM",
+    location: "Modern Art Museum",
+    description: "Annual contemporary art showcase",
+    status: "completed",
+    category: "Art",
+    imageUrl: "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=800&auto=format&fit=crop",
+    organizer: {
+      name: "Art Gallery",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Art",
+      isCurrentUser: false,
+    },
+    program: [
+      {
+        time: "10:00 AM",
+        title: "Exhibition Opening",
+        description: "Curator's introduction",
+      },
+      {
+        time: "12:00 PM",
+        title: "Artist Talk",
+        description: "Artist presentation and Q&A",
+      },
+      {
+        time: "2:00 PM",
+        title: "Workshop",
+        description: "Hands-on art workshop",
+      },
+      {
+        time: "4:00 PM",
+        title: "Closing Remarks",
+        description: "Event wrap-up and next steps",
+      },
+    ],
+    tasks: [],
+  },
+  "7": {
+    id: "7",
+    title: "Coding Hackathon",
+    date: "June 15, 2024",
+    time: "9:00 AM - 6:00 PM",
+    location: "Tech Innovation Center",
+    description: "24-hour coding challenge for developers",
+    status: "upcoming",
+    category: "Technology",
+    imageUrl: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&auto=format&fit=crop",
+    organizer: {
+      name: "Tech Innovators",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=TechInnovators",
+      isCurrentUser: false,
+    },
+    program: [
+      {
+        time: "9:00 AM",
+        title: "Hackathon Kickoff",
+        description: "Welcome and project guidelines",
+      },
+      {
+        time: "10:00 AM",
+        title: "Coding Session",
+        description: "Start coding your project",
+      },
+      {
+        time: "12:00 PM",
+        title: "Lunch Break",
+        description: "Networking lunch",
+      },
+      {
+        time: "1:00 PM",
+        title: "Mentor Session",
+        description: "Get feedback from industry experts",
+      },
+      {
+        time: "4:00 PM",
+        title: "Closing Remarks",
+        description: "Event wrap-up and next steps",
+      },
+    ],
+    tasks: [],
   },
 };
 
-const EventDetails = () => {
-  const { id } = useParams();
-  const event = mockEvents[id || "1"];
-  const [program, setProgram] = React.useState<ProgramItem[]>(event.program);
-  const [tasks, setTasks] = React.useState<TaskItem[]>(event.tasks || []);
-  const isOrganizer = event.organizer.isCurrentUser;
+const EventDetails: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
 
+  // Use useMemo to memoize event fetching logic
+  const eventData = useMemo(() => {
+    if (!id) return null;
+    return mockEvents[id] || null;
+  }, [id]);
+
+  // Use a single state for tracking event and error
+  const [state, setState] = useState<{
+    event: EventDetails | null;
+    error: string | null;
+  }>({
+    event: eventData,
+    error: eventData ? null : `Event with ID ${id} not found`,
+  });
+
+  // Use effect to handle navigation if event is not found
+  useEffect(() => {
+    if (state.error) {
+      navigate('/404');
+    }
+  }, [state.error, navigate]);
+
+  // Render loading state
+  if (!state.event) {
+    return (
+      <div className="container mx-auto p-4 text-center">
+        <h1 className="text-2xl font-bold">Loading Event Details...</h1>
+        <p className="text-muted-foreground">Please wait while we fetch the event information.</p>
+      </div>
+    );
+  }
+
+  // Render event details
+  const { event } = state;
   const statusColors = {
     live: "bg-green-500",
     upcoming: "bg-blue-500",
@@ -160,10 +274,7 @@ const EventDetails = () => {
       isCompleted: false // Initialize as not completed
     };
 
-    const updatedTasks = [...tasks, taskToAdd];
-    setTasks(updatedTasks);
-    
-    // Update mockEvents (in a real app, this would be a backend call)
+    const updatedTasks = [...event.tasks, taskToAdd];
     event.tasks = updatedTasks;
 
     // Reset modal state
@@ -177,25 +288,21 @@ const EventDetails = () => {
   };
 
   const handleProgramItemComplete = (index: number) => {
-    const updatedProgram = [...program];
+    const updatedProgram = [...event.program];
     updatedProgram[index] = {
       ...updatedProgram[index],
       isCompleted: !updatedProgram[index].isCompleted,
     };
-    setProgram(updatedProgram);
-    // In a real app, you would save this to your backend
+    event.program = updatedProgram;
   };
 
   const handleTaskComplete = (taskId: string) => {
-    const updatedTasks = tasks.map(task => 
+    const updatedTasks = event.tasks.map(task => 
       task.id === taskId 
         ? { ...task, isCompleted: !task.isCompleted } 
         : task
     );
 
-    setTasks(updatedTasks);
-    
-    // Update mockEvents (in a real app, this would be a backend call)
     event.tasks = updatedTasks;
   };
 
@@ -242,7 +349,7 @@ const EventDetails = () => {
           <div>
             <h2 className="text-xl font-semibold mb-4">Event Program</h2>
             <div className="space-y-4">
-              {program.map((item, index) => (
+              {event.program.map((item, index) => (
                 <div
                   key={index}
                   className={`flex space-x-4 p-4 border rounded-lg ${item.isCompleted ? "bg-gray-50" : ""}`}
@@ -257,7 +364,7 @@ const EventDetails = () => {
                       >
                         {item.title}
                       </h3>
-                      {isOrganizer && event.status === "live" && (
+                      {event.organizer.isCurrentUser && event.status === "live" && (
                         <Checkbox
                           checked={item.isCompleted}
                           onCheckedChange={() =>
@@ -265,7 +372,7 @@ const EventDetails = () => {
                           }
                         />
                       )}
-                      {!isOrganizer && item.isCompleted && (
+                      {!event.organizer.isCurrentUser && item.isCompleted && (
                         <Check className="h-5 w-5 text-green-500" />
                       )}
                     </div>
@@ -289,7 +396,7 @@ const EventDetails = () => {
               </Avatar>
               <div>
                 <h3 className="font-semibold">{event.organizer.name}</h3>
-                {!isOrganizer && (
+                {!event.organizer.isCurrentUser && (
                   <Button variant="link" className="p-0">
                     Contact Organizer
                   </Button>
@@ -301,7 +408,7 @@ const EventDetails = () => {
           <div>
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-semibold">Event Tasks</h2>
-              {isOrganizer && (
+              {event.organizer.isCurrentUser && (
                 <Dialog open={isTaskModalOpen} onOpenChange={setIsTaskModalOpen}>
                   <DialogTrigger asChild>
                     <Button 
@@ -384,9 +491,9 @@ const EventDetails = () => {
                 </Dialog>
               )}
             </div>
-            {tasks.length > 0 ? (
+            {event.tasks.length > 0 ? (
               <div className="space-y-4">
-                {tasks.map((task) => (
+                {event.tasks.map((task) => (
                   <div 
                     key={task.id} 
                     className={`flex space-x-4 p-4 border rounded-lg ${task.isCompleted ? "bg-gray-50" : ""}`}
@@ -405,13 +512,13 @@ const EventDetails = () => {
                               {task.responsiblePerson}
                             </span>
                           )}
-                          {isOrganizer && event.status === "live" && (
+                          {event.organizer.isCurrentUser && event.status === "live" && (
                             <Checkbox
                               checked={task.isCompleted}
                               onCheckedChange={() => handleTaskComplete(task.id)}
                             />
                           )}
-                          {!isOrganizer && task.isCompleted && (
+                          {!event.organizer.isCurrentUser && task.isCompleted && (
                             <Check className="h-5 w-5 text-green-500" />
                           )}
                         </div>

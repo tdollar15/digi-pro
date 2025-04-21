@@ -4,6 +4,7 @@ import { useLocation, Link, useNavigate } from "react-router-dom";
 import Home from "@/components/home";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { useUser } from "@/context/UserContext";
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -123,6 +124,8 @@ const allEvents: Event[] = [
 
 const MainLayout = ({ children }: MainLayoutProps) => {
   const location = useLocation();
+  const { user, loading, signOut } = useUser();
+  const navigate = useNavigate();
   const showHeader = !location.pathname.includes("/tempobook/");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -202,19 +205,21 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                   </Button>
                 )}
                 <div className="flex gap-2 ml-4 border-l pl-4">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="hover:bg-primary/5"
-                  >
-                    Log in
-                  </Button>
-                  <Button
-                    size="sm"
-                    className="bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white shadow-md hover:shadow-lg transition-all duration-300"
-                  >
-                    Sign up
-                  </Button>
+                  {/* Auth UI: Login/Logout */}
+                  {!loading && (
+                    user ? (
+                      <>
+                        <span className="text-sm text-gray-600">{user.email}</span>
+                        <Button size="sm" variant="outline" onClick={signOut}>
+                          Logout
+                        </Button>
+                      </>
+                    ) : (
+                      <Button size="sm" variant="outline" onClick={() => navigate('/login')}>
+                        Login
+                      </Button>
+                    )
+                  )}
                 </div>
               </div>
             </div>
